@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>4D Pipeline sample task - Zoom to cursor</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 0 32px;
+        width: 640px;
+        margin: 8px auto;
+        background-color: #eee;
+      }
+      div#canvas {
+        border: 2px solid black;
+        margin: 8px 0;
+        background-color: #fff;
+      }
+    </style>
+    <script src="three.min.js"></script>
+    <script src="orbitControls.js"></script>
+    <script>
+      var control = null;
+
+      function update(dt) {
+        control.update(dt);
+      }
+
+      window.onload = function () {
+        var renderer = new THREE.WebGLRenderer({ alpha: true });
+        var width = 640;
+        var height = 480;
+        renderer.setSize(width, height);
+        renderer.setClearColor(0xffffff, 0);
+
+        var div = document.getElementById("canvas");
+        div.appendChild(renderer.domElement);
+
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(
+          70,
+          width / height,
+          0.0001,
+          10000
+        );
+        camera.position.set(0, 10, 10);
+        camera.lookAt(scene.position);
+
+        //Debug Sphere for Orbit Point
+        var geometry = new THREE.SphereGeometry(0.1, 32, 16);
+        var material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+        var orbitSphere = new THREE.Mesh(geometry, material);
+        orbitSphere.visible = false;
+
+        scene.add(orbitSphere);
+
+        control = new THREE.OrbitControls(camera, renderer.domElement);
+        control.camera = camera;
+        control.orbitSphere = orbitSphere;
+        control.scene = scene;
+        control.canvas = renderer.domElement;
+
+        var geometry = new THREE.CubeGeometry(5, 5, 5);
+        var material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+        var mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+
+        var light = new THREE.PointLight(0xffff00);
+        light.position.set(10, 0, 10);
+        scene.add(light);
+
+        var dt = 10;
+        var renderFunc = function () {
+          //update(dt);
+          renderer.render(scene, camera);
+        };
+
+        setInterval(renderFunc, dt);
+      };
+    </script>
+  </head>
+  <body>
+    <h3>4D Pipeline sample task - Zoom to cursor</h3>
+    <div id="canvas"></div>
+
+    <p><strong>Changed Elements:</strong></p>
+    <ul>
+      <li>
+        Ensuring that event listeners are only available on the WebGL Canvas
+        (prevents scrolling & threejs interaction)
+      </li>
+      <p></p>
+      <li>
+        Modified Zooming through Scroll Wheel & Mouse Dollying towards the
+        cursor position.
+      </li>
+      <p></p>
+      <li>
+        Modified the Orbit behaviour to be closer to SketchUp, if you click and
+        orbit around a surface it orbits relative to the surface point;
+        indicated by yellow sphere.
+      </li>
+      <p></p>
+      <li>
+        Zooming is aware of scene objects and attempts to prevent clipping.
+      </li>
+      <p></p>
+      <li>Modified panning to suit the new method of zooming & orbitting.</li>
+      <p></p>
+      <li>
+        Ensured that all Screen Point to Ray calculations are done relative to
+        canvas window to take into account position & sizing of canvas
+      </li>
+    </ul>
+    <p><strong>Tested On:</strong></p>
+    <ul>
+      <li>Chrome : Version 92.0.4515.159</li>
+      <li>Firefox : Version 91.0</li>
+      <li>Edge: Version 92.0.902.73</li>
+      <p></p>
+    </ul>
+    <p><strong>Mission:</strong></p>
+    <p>
+      Modify this project so that the mousewheel zoom behaves like
+      <a href="http://www.sketchup.com/">SketchUp</a> in regards to the zooming.
+    </p>
+    <p>
+      Currently it will always zoom in and out of the viewport center and, on
+      some browsers, will scroll the page at the same time. Please change so
+      that mousewheel zooms in/out on the cursor position, and fix any confusing
+      interaction with the surrounding page.
+    </p>
+    <p>
+      As much as possible try to reproduce the behaviour of Sketchup's own zoom
+      behaviour when in 'orbit' mode.
+    </p>
+    <p>
+      Note that when the cursor is positioned in the center of the viewport, an
+      ideal solution should produce zooming behaviour virtually identical to the
+      existing behaviour.
+    </p>
+
+    <p><em>Time to spend 2-5 hours.</em></p>
+    <p>Upon completion please send back zipped project for review.</p>
+  </body>
+</html>
